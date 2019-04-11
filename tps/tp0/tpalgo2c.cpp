@@ -2,19 +2,21 @@
 
 using namespace std;
 
+#define MAX_ASCII 255
+#define MAX_DICT 65535
 
 class Simbolo
 {
 
 	size_t prefijo;
-	char sufijo;
+	unsigned char sufijo;
 
 public:
 
 	Simbolo()
 	{
-		prefijo = 255;
-		sufijo = 255;
+		prefijo = MAX_DICT; // Refinamiento: VACIO
+		sufijo = '\0'; // Refinar
 	}
 
 	Simbolo(size_t prefijo, char sufijo)
@@ -64,7 +66,7 @@ public:
 class Diccionario
 {
 
-	Simbolo sim[8];
+	Simbolo sim[MAX_DICT];
 	size_t len;
 	size_t indice;
 
@@ -72,12 +74,12 @@ public:
 
 	Diccionario()
 	{
-		sim[0] = Simbolo(255, 'A');	
-		sim[1] = Simbolo(255, 'B');	
-		sim[2] = Simbolo(255, 'C');	
+	for (int i = 0; i < MAX_ASCII+1; i++)
+		sim [i].setSufijo(i);
 
-		len = 8;
-		indice = 3;
+
+	len = MAX_DICT;
+	indice = MAX_ASCII+1;
 	}
 
 	int buscarSimbolo(const Simbolo &simbolo)
@@ -96,9 +98,11 @@ public:
 
 	void agregarSimbolo(const Simbolo &simbolo)
 	{
-
-		sim[indice] = simbolo;
-		indice++;
+		if(indice < len)
+		{
+			sim[indice] = simbolo;
+			indice++;			
+		}
 
 	}
 
@@ -143,7 +147,7 @@ int main(void)
 			// No encontro en el diccionario:
 			dic.agregarSimbolo(buffer);
 			cout << buffer.getPrefijo() << endl;
-			buffer.setPrefijo(255);
+			buffer.setPrefijo(MAX_DICT);
 
 			indice = dic.buscarSimbolo(buffer);
 		}
