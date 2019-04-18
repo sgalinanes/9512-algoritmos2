@@ -1,10 +1,15 @@
 #ifndef DICCIONARIO__H
 #define DICCIONARIO__H
 
+#include <iostream>
+#include "types.h"
+
 #define MAX_DICT 65535
 #define MAX_ASCII 256
 
 #define VOID 70000
+
+using namespace std;
 
 class Simbolo
 {
@@ -54,15 +59,17 @@ public:
 
 	// ## --- Metodos --- ## //
 	// TODO: status_t
-	int buscarSimbolo(const Simbolo &);
+	status_t buscarSimbolo(const Simbolo &, size_t &);
 	// TODO: status_t
 	void agregarSimbolo(const Simbolo &);
 	void imprimir();
-
+	void resetDict();
 	// TODO: status_t
 	unsigned char getSufijoByIndex(size_t);
+	//TODO: una sola funcipon checkIndex con parametro bool default false para chequear ascii
 	bool checkIndexInASCII(size_t );
-	void imprimirSimbolos(size_t, Simbolo &);
+	bool checkIndex(size_t );
+	void imprimirSimbolos(size_t, Simbolo &, ostream *);
 
 };
 

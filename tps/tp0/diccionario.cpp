@@ -1,5 +1,6 @@
 #include <iostream>
 #include "diccionario.h"
+#include "types.h"
 
 using namespace std;
 
@@ -80,39 +81,61 @@ Diccionario::Diccionario()
 
 // ## --- Metodos --- ## //
 // TODO: status_t
-/*status_t*/ int Diccionario::buscarSimbolo(const Simbolo &simbolo)
+status_t Diccionario::buscarSimbolo(const Simbolo &simbolo, size_t &idx)
 {
 	/*
 	Recibe por parametro el simbolo, devuelve el indice en el diccionario
 	en el que se encuentra un simbolo que es igual al pasado por parametro
 	*/
 
-	for(int idx = 0; idx < len; idx++)
+	for(idx = 0; idx < len; idx++)
 	{
 		if(sim[idx] == simbolo)
 		{
-			return idx;
+			return OK;
 		}
 	}
 
-	return -1;
+	return SYMBOL_NOT_FOUND;
 }
 // TODO: status_t
 /*status_t*/ void Diccionario::agregarSimbolo(const Simbolo &simbolo)
 {
 	/*
 	Recibe por parametro el simbolo, lo agrega al diccionario y actualiza el indice
+	En caso de que el indice agregado sea el ultimo disponible, resetea el diccionario.
+	(No agrega el último pues ahora hara el reseteo)
 	*/
-
-	if(indice < len)
+	if(indice < len-1)
 	{
 		sim[indice] = simbolo;
-		indice++;			
+		indice++;		
 	}
 	else
 	{
-		// TODO: Resetear el diccionario
+
+		this->resetDict();
+
 	}
+
+}
+
+void Diccionario::resetDict()
+{
+
+	/* 
+	Resetea el diccionario dejando unicamente los simbolos correspondientes a los ASCII, es
+	decir los indices entre 0 y 255. Resetea el largo, el arreglo de simbolos y el indice.
+	*/
+
+	for(int i = MAX_ASCII; i < len; i++)
+	{
+		sim[i].setPrefijo(VOID);
+		sim[i].setSufijo(VOID);
+	}
+
+	indice = MAX_ASCII;
+
 
 }
 
@@ -122,7 +145,7 @@ void Diccionario::imprimir()
 	Imrpime los simbolos contenidos en el diccionario
 	*/
 
-	for(int i = 0; i < indice; i++)
+	for(int i = MAX_ASCII; i < indice; i++)
 	{
 		cout << "Indice " << i << " ";
 		sim[i].imprimir();
@@ -161,7 +184,20 @@ bool Diccionario::checkIndexInASCII(size_t indice)
 
 }
 
-void Diccionario::imprimirSimbolos(size_t indice, Simbolo &buffer)
+bool Diccionario::checkIndex(size_t indice)
+{
+	/* Chequea si el indice esta en el diccionario entero
+	*/
+
+	if(indice >= this->indice)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void Diccionario::imprimirSimbolos(size_t indice, Simbolo &buffer, ostream *oss)
 {
 	/*
 	Imprime recursivamente los caracteres "comprimidos",
@@ -170,18 +206,23 @@ void Diccionario::imprimirSimbolos(size_t indice, Simbolo &buffer)
 	*/
 
 	// TODO: Recursividad de cola
+	if(oss == NULL)
+	{
+		//TODO: status_t
+		return;
+	}
+
 	size_t idx_prefijo = sim[indice].getPrefijo();
 	size_t idx_sufijo = sim[indice].getSufijo();
 
 	if(checkIndexInASCII(idx_prefijo))
 	{
 		buffer.setSufijo(idx_prefijo);
-		cout << sim[idx_prefijo].getSufijo();
-		cout << sim[idx_sufijo].getSufijo();
+		*oss << sim[idx_prefijo].getSufijo();
+		*oss << sim[idx_sufijo].getSufijo();
 		return;
 	}
-
-	imprimirSimbolos(idx_prefijo, buffer);
-	cout << (int)sim[indice].getSufijo() << "/" << sim[indice].getSufijo();
+	imprimirSimbolos(idx_prefijo, buffer, oss);
+	*oss << sim[indice].getSufijo();
 
 }
