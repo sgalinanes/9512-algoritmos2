@@ -58,6 +58,7 @@ public:
 	Diccionario();
 
 	// ## --- Metodos --- ## //
+	size_t getIndice();
 	// TODO: status_t
 	status_t buscarSimbolo(const Simbolo &, size_t &);
 	// TODO: status_t
@@ -69,7 +70,9 @@ public:
 	//TODO: una sola funcipon checkIndex con parametro bool default false para chequear ascii
 	bool checkIndexInASCII(size_t );
 	bool checkIndex(size_t );
-	void imprimirSimbolos(size_t, Simbolo &, ostream *);
+	void imprimirSimbolos(size_t, size_t, Simbolo &, ostream *);
+	void imprimirSimbolos(size_t , ostream *);
+	void imprimirPrefijo(size_t, ostream *);
 
 };
 

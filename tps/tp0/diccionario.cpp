@@ -80,6 +80,10 @@ Diccionario::Diccionario()
 }
 
 // ## --- Metodos --- ## //
+size_t Diccionario::getIndice()
+{
+	return this->indice;
+}
 // TODO: status_t
 status_t Diccionario::buscarSimbolo(const Simbolo &simbolo, size_t &idx)
 {
@@ -131,7 +135,7 @@ void Diccionario::resetDict()
 	for(int i = MAX_ASCII; i < len; i++)
 	{
 		sim[i].setPrefijo(VOID);
-		sim[i].setSufijo(VOID);
+		sim[i].setSufijo(0);
 	}
 
 	indice = MAX_ASCII;
@@ -197,7 +201,7 @@ bool Diccionario::checkIndex(size_t indice)
 	return true;
 }
 
-void Diccionario::imprimirSimbolos(size_t indice, Simbolo &buffer, ostream *oss)
+void Diccionario::imprimirSimbolos(size_t indice_ant, size_t indice_act, Simbolo &buffer, ostream *oss)
 {
 	/*
 	Imprime recursivamente los caracteres "comprimidos",
@@ -211,9 +215,15 @@ void Diccionario::imprimirSimbolos(size_t indice, Simbolo &buffer, ostream *oss)
 		//TODO: status_t
 		return;
 	}
+	if(!checkIndex(indice_act))
+	{
+		imprimirSimbolos(indice_ant, indice_ant, buffer, oss);
+		imprimirPrefijo(indice_ant, oss);
+		return;
+	}
 
-	size_t idx_prefijo = sim[indice].getPrefijo();
-	size_t idx_sufijo = sim[indice].getSufijo();
+	size_t idx_prefijo = sim[indice_act].getPrefijo();
+	size_t idx_sufijo = sim[indice_act].getSufijo();
 
 	if(checkIndexInASCII(idx_prefijo))
 	{
@@ -222,7 +232,34 @@ void Diccionario::imprimirSimbolos(size_t indice, Simbolo &buffer, ostream *oss)
 		*oss << sim[idx_sufijo].getSufijo();
 		return;
 	}
-	imprimirSimbolos(idx_prefijo, buffer, oss);
+	imprimirSimbolos(indice_ant, idx_prefijo, buffer, oss);
+	*oss << sim[indice_act].getSufijo();
+
+}
+
+void Diccionario::imprimirSimbolos(size_t indice, ostream *oss)
+{
+
+	if(indice > this->indice)
+	{
+		// TODO: status_t o boolean
+		return;
+	}
+
 	*oss << sim[indice].getSufijo();
+
+
+}
+
+void Diccionario::imprimirPrefijo(size_t indice, ostream *oss)
+{
+	size_t pref = sim[indice].getPrefijo();
+
+	while(!checkIndexInASCII(pref))
+	{
+		pref = sim[pref].getPrefijo();
+	}
+
+	*oss << (unsigned char)pref;
 
 }

@@ -5,3 +5,5 @@ typedef enum {
 	OK,
 	SYMBOL_NOT_FOUND
 } status_t;
+
+#endif

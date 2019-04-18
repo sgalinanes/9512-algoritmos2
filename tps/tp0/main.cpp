@@ -17,6 +17,8 @@
 #define OPT_COMPRESS 	"compress"
 #define OPT_DECOMPRESS 	"decompress"
 
+#define TOKEN_SEPARATOR	','
+
 using namespace std;
 
 static void opt_input(string const &);
@@ -86,7 +88,7 @@ opt_input(string const &arg)
 										// sequence of characters (i.e., a C-string) representing
 										// the current value of the string object.
 		iss = &ifs;
-		cout << "INPUT =" << ifs << endl;
+		cout << "INPUT =" << iss << endl;
 	}
 
 	// Verificamos que el stream este OK.
@@ -113,7 +115,7 @@ opt_output(string const &arg)
 	} else {
 		ofs.open(arg.c_str(), ios::out);
 		oss = &ofs;
-		cout << "OUTPUT =" << ofs << endl;
+		cout << "OUTPUT =" << oss << endl;
 	}
 
 	// Verificamos que el stream este OK.
@@ -188,65 +190,137 @@ int main(int argc, char * const argv[])
 }
 
 void compress(istream *iss, ostream *oss)
-{
+{	
+	// Chequear punteros nulos
 	if(iss == NULL || oss == NULL)
 	{
 		//TODO: ret status_t
 		return;
 	}
 
+	// Crear diccionario; Simbolo (para lectura/insercion) en diccionario y status_t.
 	Diccionario dic;
 	Simbolo buffer;
 	status_t st;
+	bool read = false;
 
-	int indice;
+	// Crear variable indice y variable de lectura.
+	size_t indice;
 	unsigned char lec; 	
 
 	while(*iss >> lec)
 	{
-		//cout << "Read: " << lec << endl;
+		//cout << "Leo: " << lec << ": ";
+		// Parseamos lo leido al sufijo del buffer
 		buffer.setSufijo(lec);
 
+		// Buscamos si el símbolo se encuentra en el diccionario.
 		if( (st = dic.buscarSimbolo(buffer, indice)) != OK)
 		{
-			// No encontro en el diccionario:
+			// Caso: No se encontro en el diccionario
+
+			// Agregamos el buffer al diccionario
+			
 			dic.agregarSimbolo(buffer);
-			*oss << buffer.getPrefijo() << ",";
 
-			// Buscamos el indice del sufijo.
-			indice = (int)buffer.getSufijo();
+			// Envíamos el prefijo a la salida (std o archivo)
+			*oss << buffer.getPrefijo() << TOKEN_SEPARATOR;
+
+			// Buscamos el indice del sufijo
+			indice = (size_t)buffer.getSufijo();
 		}
+		else
+		{
+			//cout << "Encontre en: " << indice;
+		}
+		// Agregamos el indice del encontrado o el agregado
+		if(st != OK)
+		{
+			//cout << "Agrego: " << dic.getIndice()-1 << ": [ " << buffer.getPrefijo() << " | " << buffer.getSufijo() << " ]";
+			//cout << " Impr: " << buffer.getPrefijo();
 
+		}
 		buffer.setPrefijo(indice);
+
+
+		//cout << endl;
 	}
 
-	*oss << buffer.getPrefijo() << endl;
+	// Chequeamos si el bit fail esta encendido y el EOF no fue leído
+	if(!iss->eof() && iss->fail())
+	{
+		// TODO: funcion de error u algo
+		cout << "Ocurrio un error al realizar la lectura del archivo" << endl;
+	}
+	else
+	{
+		// Imprimimos el ultimo prefijo (al llegar a EOF)
+		*oss << buffer.getPrefijo() << endl;		
+	}
 
 }
 
 void decompress(istream *iss, ostream *oss)
 {
+	// Creamos un diccionario y un simbolo buffer
 	Diccionario dic;
-
 	Simbolo buffer;
 
+	// Inicializamos los indices a vacío.
 	size_t indice_ant = VOID;
 	size_t indice_act = VOID;
+
+	// Utilizamos este caracter para leer los separadores.
 	char c;
 
-	// Primer caracter (no se imprime nada):
+	// Primer caracter (no se agrega nada al diccionario):
 	if(*iss >> indice_act)
 	{
 		*oss << dic.getSufijoByIndex(indice_act);
 		indice_ant = indice_act;
 		*iss >> c;
 	}
+	else
+	{
+		// TODO: error
+		cout << "Error" << endl;
+	}
 
+	// Comenzamos la lectura (desde el segundo)
 	while(*iss >> indice_act)
 	{
 
 		if(dic.checkIndex(indice_act))
 		{	
+			buffer.setPrefijo(indice_ant);
+			if(dic.checkIndexInASCII(indice_act))
+			{
+				buffer.setSufijo(indice_act);			
+				dic.imprimirSimbolos(indice_act, oss);
+			}
+			else
+			{
+				dic.imprimirSimbolos(indice_ant, indice_act, buffer, oss);
+			}
+
+			dic.agregarSimbolo(buffer);					
+
+		}
+		else
+		{
+			buffer.setPrefijo(indice_ant);
+			dic.imprimirSimbolos(indice_ant, indice_act, buffer, oss);
+			dic.agregarSimbolo(buffer);
+		}
+
+		indice_ant = indice_act;
+		*iss >> c;
+	}
+
+}
+
+
+			/*
 			if(dic.checkIndexInASCII(indice_act))
 			{
 				*oss << dic.getSufijoByIndex(indice_act);
@@ -264,28 +338,4 @@ void decompress(istream *iss, ostream *oss)
 				dic.agregarSimbolo(buffer);
 
 			}
-		}
-		else
-		{
-			cout << "Cai aca" << endl;
-			/*
-			Sımbolo.prefijo = Índice viejo
-			Sımbolo.sufijo = Primer caracter de Diccionario[Índice viejo]
-			Agregar Sımbolo al Diccionario
-			Imprimir Sımbolo por Salida
 			*/
-
-			buffer.setPrefijo(indice_ant);
-			buffer.setSufijo(dic.getSufijoByIndex(indice_ant));
-			dic.agregarSimbolo(buffer);
-			*oss << dic.getSufijoByIndex(buffer.getPrefijo());
-			*oss << dic.getSufijoByIndex(buffer.getSufijo());
-
-		}
-
-		indice_ant = indice_act;
-		*iss >> c;
-	}
-
-}
-
