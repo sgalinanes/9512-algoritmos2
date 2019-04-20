@@ -15,9 +15,13 @@ status_t compress(istream *iss, ostream *oss)
 
 	size_t indice;
 	unsigned char lec; 	
+	char c;
 
-	while(*iss >> lec)
+	while(iss->get(c))
 	{
+		// Casteamos el char leído a unsigned char
+		lec = static_cast<unsigned char>(c);
+
 		// Parseamos lo leido al sufijo del buffer
 		buffer.setSufijo(lec);
 
@@ -44,8 +48,14 @@ status_t compress(istream *iss, ostream *oss)
         return ERROR_READ_FILE;
 
 	else
-		// Imprimimos el ultimo prefijo (al llegar a EOF)
-		*oss << buffer.getPrefijo() << endl;
+		// Chequeamos que el prefijo no sea void, podria suceder que el archivo este vacio por lo que
+		// nunca entra a la loop de lectura.
+		if(buffer.getPrefijo() != VOID)
+		{
+			// Imprimimos el ultimo prefijo (al llegar a EOF)
+			*oss << buffer.getPrefijo() << endl;			
+		}
+
 
     return OK;		
 }
@@ -68,12 +78,24 @@ status_t decompress(istream *iss, ostream *oss)
 	// Primer caracter (no se agrega nada al diccionario):
 	if(*iss >> indice_act)
 	{
-		*oss << dic.getSufijoByIndex(indice_act);
+		// Buscamos el sufijo dado el indice
+		unsigned char sfx;
+		if( (st = dic.getSufijoByIndex(indice_act, sfx)) != OK)
+		{
+			return st;
+		}
+
+		// Imprimimos el sufijo
+		*oss << sfx;
+
+		// Actualizamos el indice
 		indice_ant = indice_act;
+
+		// Salteamos el separador
 		*iss >> c;
 	}
 	else
-        return ERROR_INDEX_OUT_OF_RANGE;
+        return ERROR_READ_FILE;
 
 	// Comenzamos la lectura (desde el segundo)
 	while(*iss >> indice_act)
@@ -103,26 +125,3 @@ status_t decompress(istream *iss, ostream *oss)
 
     return OK;
 }
-
-
-
-		/*
-		if(dic.checkIndex(indice_act))
-		{	
-
-			if(dic.checkIndexInASCII(indice_act))
-			{
-				buffer.setSufijo(indice_act);			
-				if ((st = dic.imprimirSimbolos(indice_act, oss)) != OK)
-                    return st;
-			}
-			else
-				if ((st = dic.imprimirSimbolos(indice_ant, indice_act, buffer, oss)) != OK)
-                    return st;
-		}
-		else
-		{
-			if ((st = dic.imprimirSimbolos(indice_ant, indice_act, buffer, oss)) != OK)
-                return st;
-		}
-		*/

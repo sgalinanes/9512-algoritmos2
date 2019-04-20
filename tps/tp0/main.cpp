@@ -104,5 +104,6 @@ int main(int argc, char * const argv[])
 	else
 		st = decompress(iss, oss);
 
+	//cout << "State returned: " << st << endl;
 	return st;
 }

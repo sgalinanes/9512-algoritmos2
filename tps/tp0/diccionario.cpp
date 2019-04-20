@@ -94,9 +94,9 @@ bool Diccionario::buscarSimbolo(const Simbolo &simbolo, size_t &idx)
 
 void Diccionario::agregarSimbolo(const Simbolo &simbolo)
 {
-	//Recibe por parametro el simbolo, lo agrega al diccionario y actualiza el indice
-	//En caso de que el indice agregado sea el ultimo disponible, resetea el diccionario.
-	//(No agrega el último pues ahora hara el reseteo)
+	// Recibe por parametro el simbolo, lo agrega al diccionario y actualiza el indice.
+	// En caso de que el indice agregado sea el ultimo disponible, resetea el diccionario.
+	// (No agrega el último pues lo borraría)
 
 	if(indice < len-1)
 	{
@@ -104,14 +104,13 @@ void Diccionario::agregarSimbolo(const Simbolo &simbolo)
 		indice++;		
 	}
 	else
-		this->resetDict();
-
+		resetDict();
 }
 
 void Diccionario::resetDict()
 {
-	//Resetea el diccionario dejando unicamente los simbolos correspondientes a los ASCII, es
-	//decir los indices entre 0 y 255. Resetea el largo, el arreglo de simbolos y el indice.
+	// Resetea el diccionario dejando unicamente los simbolos correspondientes a los ASCII, es
+	// decir los indices entre 0 y 255. Resetea el arreglo de simbolos y el indice.
 
 	for(size_t i = MAX_ASCII; i < len; i++)
 	{
@@ -124,7 +123,7 @@ void Diccionario::resetDict()
 
 void Diccionario::imprimir()
 {
-	//Imrpime los simbolos contenidos en el diccionario
+	// Imprime los simbolos contenidos en el diccionario
 
 	for(size_t i = MAX_ASCII; i < indice; i++)
 	{
@@ -132,106 +131,34 @@ void Diccionario::imprimir()
 		sim[i].imprimir();
 	}
 }
-// TODO: status_t
-/* status_t */ unsigned char Diccionario::getSufijoByIndex(size_t indice)
+
+status_t Diccionario::getSufijoByIndex(size_t indice, unsigned char &suf)
 {
-	//Devuelve el sufijo del indice del diccionario pasado por parametro
+	// Devuelve el sufijo del indice del diccionario pasado por parametro
 
 	if(indice > len)
 	{
-		// TODO: Devolver un status_t que indique que el indice esta fuera de bounds.
-		return 0;
-	}
-
-	return sim[indice].getSufijo();
-
-}
-
-
-bool Diccionario::checkIndexInASCII(size_t indice)
-{
-	// Chequea si el indice esta entre los ASCII 
-
-	if(indice >= MAX_ASCII)
-		return false;
-
-	return true;
-
-}
-
-bool Diccionario::checkIndex(size_t indice)
-{
-	// Chequea si el indice esta en el diccionario entero
-
-	if(indice >= this->indice)
-		return false;
-
-	return true;
-}
-
-/*
-status_t Diccionario::imprimirSimbolos(size_t indice_ant, size_t indice_act, Simbolo &buffer, ostream *oss)
-{
-	//Imprime recursivamente los caracteres "comprimidos",
-	//y finaliza actualizando el simbolo a agregar al diccionario
-	//poniendo en su sufijo el primer caracter  correspondiente
-
-	// TODO: Recursividad de cola
-	if(oss == NULL)
-		return ERROR_NULL_POINTER;
-
-	if(!checkIndex(indice_act))
-	{
-		imprimirSimbolos(indice_ant, indice_ant, buffer, oss);
-		imprimirPrefijo(indice_ant, oss);
-		return OK;
-	}
-
-	size_t idx_prefijo = sim[indice_act].getPrefijo();
-	size_t idx_sufijo = sim[indice_act].getSufijo();
-
-	if(checkIndexInASCII(idx_prefijo))
-	{
-		buffer.setSufijo(idx_prefijo);
-		*oss << sim[idx_prefijo].getSufijo();
-		*oss << sim[idx_sufijo].getSufijo();
-		return OK;
-	}
-
-	imprimirSimbolos(indice_ant, idx_prefijo, buffer, oss);
-	*oss << sim[indice_act].getSufijo();
-
-	return OK;
-}
-
-status_t Diccionario::imprimirSimbolos(size_t indice, ostream *oss)
-{
-	if(oss == NULL)
-		return ERROR_NULL_POINTER;
-
-	if(indice > this->indice)
 		return ERROR_INDEX_OUT_OF_RANGE;
+	}
 
-	*oss << sim[indice].getSufijo();
-
+	suf = sim[indice].getSufijo();
 	return OK;
 }
 
-status_t Diccionario::imprimirPrefijo(size_t indice, ostream *oss)
+
+bool Diccionario::checkIndex(size_t indice, bool ASCII=false)
 {
-	if(oss == NULL)
-		return ERROR_NULL_POINTER;
+	// Chequea si el indice esta en el diccionario.
+	// En caso de que el parametro ASCII sea true, entonces unicamente chequea en la parte del diccionario donde el prefijo es nulo. 
+	// (los ascii)
 
-	size_t pref = sim[indice].getPrefijo();
+	size_t comp = ASCII ? MAX_ASCII : this->indice;
 
-	while(!checkIndexInASCII(pref))
-		pref = sim[pref].getPrefijo();
+	if(indice >= comp)
+		return false;
 
-	*oss << (unsigned char)pref;
-
-	return OK;
+	return true;
 }
-*/
 
 status_t Diccionario::reconstruirCadena(size_t indice_act, Simbolo &buffer, ostream *oss, size_t indice_ant = VOID)
 {
@@ -243,8 +170,7 @@ status_t Diccionario::reconstruirCadena(size_t indice_act, Simbolo &buffer, ostr
 		// pertenecen al diccionario, entonces no podemos realizar la reconstruccion (la data es erronea).
 		if(indice_ant == indice_act)
 		{
-			status_t st = ERROR_WRONG_COMPRESSION;
-			return st;			
+			return ERROR_READ_FILE;	
 		}
 
 		// Llamamos nuevamente a la función pero dandole el indice anterior como indice actual (el prefijo del simbolo a crear)

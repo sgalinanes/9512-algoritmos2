@@ -60,19 +60,11 @@ public:
 	size_t getIndice();
 
 	bool buscarSimbolo(const Simbolo &, size_t &);
-	// TODO: status_t
 	void agregarSimbolo(const Simbolo &);
 	void imprimir();
 	void resetDict();
-	unsigned char getSufijoByIndex(size_t);
-	//TODO: una sola funcipon checkIndex con parametro bool default false para chequear ascii
-	bool checkIndexInASCII(size_t );
-	bool checkIndex(size_t );
-	/*
-	status_t imprimirSimbolos(size_t, size_t, Simbolo &, ostream *);
-	status_t imprimirSimbolos(size_t , ostream *);
-	status_t imprimirPrefijo(size_t, ostream *);
-	*/
+	status_t getSufijoByIndex(size_t, unsigned char &);
+	bool checkIndex(size_t, bool );
 	status_t reconstruirCadena(size_t , Simbolo &, ostream *, size_t );
 
 };
