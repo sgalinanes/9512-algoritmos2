@@ -30,7 +30,6 @@ public:
 	size_t getPrefijo();
 	unsigned char getSufijo();
 
-
 	// Setters
 	void setSufijo(unsigned char);
 	void setPrefijo(size_t);
@@ -59,20 +58,22 @@ public:
 
 	// ## --- Metodos --- ## //
 	size_t getIndice();
-	// TODO: status_t
-	status_t buscarSimbolo(const Simbolo &, size_t &);
+
+	bool buscarSimbolo(const Simbolo &, size_t &);
 	// TODO: status_t
 	void agregarSimbolo(const Simbolo &);
 	void imprimir();
 	void resetDict();
-	// TODO: status_t
 	unsigned char getSufijoByIndex(size_t);
 	//TODO: una sola funcipon checkIndex con parametro bool default false para chequear ascii
 	bool checkIndexInASCII(size_t );
 	bool checkIndex(size_t );
-	void imprimirSimbolos(size_t, size_t, Simbolo &, ostream *);
-	void imprimirSimbolos(size_t , ostream *);
-	void imprimirPrefijo(size_t, ostream *);
+	/*
+	status_t imprimirSimbolos(size_t, size_t, Simbolo &, ostream *);
+	status_t imprimirSimbolos(size_t , ostream *);
+	status_t imprimirPrefijo(size_t, ostream *);
+	*/
+	status_t reconstruirCadena(size_t , Simbolo &, ostream *, size_t );
 
 };
 
