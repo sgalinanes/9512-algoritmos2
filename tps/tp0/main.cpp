@@ -9,6 +9,7 @@
 #include "diccionario.h"
 #include "cmdline.h"
 #include "process.h"
+#include "errors.h"
 
 using namespace std;
 
@@ -99,11 +100,16 @@ int main(int argc, char * const argv[])
 	
 	status_t st;
 
-	if(process == OPT_COMPRESS)
+	if (process == OPT_COMPRESS) {
 		st = compress(iss, oss);
-	else
+		if (st != OK)
+			display_error (st);
+	}
+	else {
 		st = decompress(iss, oss);
+		if (st != OK)
+			display_error (st);
+	}
 
-	//cout << "State returned: " << st << endl;
 	return st;
 }

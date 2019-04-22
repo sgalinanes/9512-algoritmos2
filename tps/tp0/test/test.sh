@@ -46,3 +46,9 @@ echo "$ diff -s entrada4.txt vuelta4.txt"
 diff -s entrada4.txt vuelta4.txt
 
 echo -e "\n"
+
+echo "Caso de prueba  5"
+echo "$ cat salida5.txt"
+cat salida5.txt
+echo "$ ./tp0 -i salida5.txt -o vuelta5.txt -p decompress"
+./tp0 -i salida5.txt -o vuelta5.txt -p decompress
