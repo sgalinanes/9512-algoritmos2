@@ -39,6 +39,7 @@ status_t compress(istream *iss, ostream *oss)
 			// Buscamos el indice del sufijo
 			indice = (size_t)buffer.getSufijo();
 		}
+
 		// Agregamos el indice del encontrado o el agregado
 		buffer.setPrefijo(indice);
 	}
@@ -62,6 +63,9 @@ status_t compress(istream *iss, ostream *oss)
 
 status_t decompress(istream *iss, ostream *oss)
 {
+	if(iss == NULL || oss == NULL)
+		return ERROR_NULL_POINTER;	
+	
 	// Creamos un diccionario y un simbolo buffer
 	Diccionario dic;
 	Simbolo buffer;
@@ -75,7 +79,7 @@ status_t decompress(istream *iss, ostream *oss)
 	// Utilizamos este caracter para leer los separadores.
 	char c;
 
-	// Primer caracter (no se agrega nada al diccionario):
+	// Primer indice (no se agrega nada al diccionario):
 	if(*iss >> indice_act)
 	{
 		// Buscamos el sufijo dado el indice
@@ -105,9 +109,7 @@ status_t decompress(istream *iss, ostream *oss)
 
 		// Llamamos a la función reconstruir cadena para realizar la insercion del sufijo en el buffer y la impresión.
 		if( (st = dic.reconstruirCadena(indice_act, buffer, oss, indice_ant)) != OK)
-		{
 			return st;
-		}
 
 		// Agregamos el simbolo al diccionario
 		dic.agregarSimbolo(buffer);
@@ -117,6 +119,8 @@ status_t decompress(istream *iss, ostream *oss)
 
 		// Salteamos la coma
 		*iss >> c;
+		if(c != TOKEN_SEPARATOR)
+			return ERROR_FILE_FORMAT;
 	}
 
 	// Chequeamos si el bit fail esta encendido y el EOF no fue leído

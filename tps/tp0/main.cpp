@@ -4,18 +4,22 @@
 #include <sstream>
 #include <cstdlib>
 
-#include "main.h"
 #include "types.h"
 #include "diccionario.h"
 #include "cmdline.h"
 #include "process.h"
 #include "errors.h"
 
+#define OPT_COMPRESS "compress"
+#define OPT_DECOMPRESS	"decompress"
+
+
 using namespace std;
 
 static void opt_input(string const &);
 static void opt_output(string const &);
 static void opt_process(string const &);
+
 
 static string process;
 static istream *iss = 0;
