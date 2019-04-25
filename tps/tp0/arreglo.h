@@ -13,7 +13,6 @@ class Arreglo
         Arreglo ();
         Arreglo (size_t );
         Arreglo (Arreglo <T> &);
-        size_t Tamanio ();
         T & operator [] (size_t);
         ~Arreglo ();        
 };
@@ -43,12 +42,6 @@ Arreglo <T> :: Arreglo (Arreglo <T> & c)
     {
         ptr [i] = c.Valor (i);
     }
-}
-
-template <class T>
-size_t Arreglo <T> :: Tamanio ()
-{
-    return tamanio;
 }
 
 template <class T>

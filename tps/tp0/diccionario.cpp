@@ -135,7 +135,8 @@ void Diccionario::imprimir()
 
 status_t Diccionario::getSufijoByIndex(size_t indice, unsigned char &suf)
 {
-	// Devuelve el sufijo del indice del diccionario pasado por parametro
+	// Devuelve un status_t en caso de que el indice pasado por parametro sea mayor al largo del arreglo.
+	// Modifica el sufijo del indice del diccionario pasado por parametro como referencia.
 
 	if(indice > len)
 	{
@@ -163,6 +164,7 @@ bool Diccionario::checkIndex(size_t indice, bool ASCII=false)
 
 status_t Diccionario::reconstruirCadena(size_t indice_act, Simbolo &buffer, ostream *oss, size_t indice_ant = VOID)
 {
+	status_t st;
 
 	// Chequeamos si el indice esta en el diccionario
 	if(!checkIndex(indice_act))
@@ -175,7 +177,8 @@ status_t Diccionario::reconstruirCadena(size_t indice_act, Simbolo &buffer, ostr
 		}
 
 		// Llamamos nuevamente a la función pero dandole el indice anterior como indice actual (el prefijo del simbolo a crear)
-		reconstruirCadena(indice_ant, buffer, oss, indice_ant);
+		if( (st = reconstruirCadena(indice_ant, buffer, oss, indice_ant)) != OK)
+			return st;
 
 		// Imprimimos el sufijo del buffer (que sera el primer caracter de la cadena del indice anterior previamente pasado)
 		*oss << buffer.getSufijo();

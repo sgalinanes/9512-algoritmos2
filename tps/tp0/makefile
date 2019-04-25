@@ -22,4 +22,4 @@ main.o: main.cpp process.cpp process.h diccionario.cpp diccionario.h cmdline.cpp
 	$(CXX) $(CXXLAGS) -o main.o -c main.cpp 
 
 clean :
-	rm*.o
+	rm *.o

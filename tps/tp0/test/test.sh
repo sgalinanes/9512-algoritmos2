@@ -5,9 +5,7 @@ touch entrada1.txt
 ./tp0 -i entrada1.txt -o salida1.txt
 cat salida1.txt
 
-set +v
 echo -e "\n"
-set -v
 
 cat entrada2.txt
 ./tp0 < entrada2.txt

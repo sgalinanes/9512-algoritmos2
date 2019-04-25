@@ -102,8 +102,10 @@ int main(int argc, char * const argv[])
 	cmdline cmdl(options);	// Objeto con parametro tipo option_t (struct) declarado globalmente. Ver línea 51 main.cc
 	cmdl.parse(argc, argv); // Metodo de parseo de la clase cmdline
 	
+	// Variable de estado
 	status_t st;
 
+	// Chequeamos que proceso se necesita realizar
 	if (process == OPT_COMPRESS) {
 		st = compress(iss, oss);
 		if (st != OK)
