@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "types.h"
+#include "arreglo.h"
 
 #define MAX_DICT 65535
 #define MAX_ASCII 256
@@ -44,7 +45,7 @@ public:
 class Diccionario
 {
 	// Arreglo de simbolos (el diccionario)
-	Simbolo sim[MAX_DICT];
+	Arreglo<Simbolo> sim;
 
 	// Largo del diccionario
 	size_t len;

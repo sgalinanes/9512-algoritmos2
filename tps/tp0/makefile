@@ -12,7 +12,7 @@ errors.o: errors.cpp errors.h types.h
 cmdline.o: cmdline.cpp cmdline.h
 	$(CXX) $(CXXFLAGS) -o cmdline.o -c cmdline.cpp
 
-diccionario.o: diccionario.cpp diccionario.h types.h
+diccionario.o: diccionario.cpp diccionario.h types.h arreglo.h
 	$(CXX) $(CXXFLAGS) -o diccionario.o -c diccionario.cpp
 
 process.o: process.cpp process.h types.h diccionario.cpp diccionario.h 

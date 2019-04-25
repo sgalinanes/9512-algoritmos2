@@ -1,6 +1,7 @@
 #include <iostream>
 #include "diccionario.h"
 #include "types.h"
+#include "arreglo.h"
 
 using namespace std;
 
@@ -62,7 +63,7 @@ bool Simbolo::operator==(const Simbolo &sim)
 
 // CLASE DICCIONARIO //
 // ## --- Constructores --- ## //
-Diccionario::Diccionario()
+Diccionario::Diccionario():sim(MAX_DICT)
 {
 	for(size_t i = 0; i < MAX_ASCII; i++)
 		// En los primeros 256 lugares, copia los simbolos ASCII correspondientes.
