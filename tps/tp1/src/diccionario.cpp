@@ -22,8 +22,10 @@ Simbolo::Simbolo(unsigned short prefijo, unsigned char sufijo, unsigned short pr
 {
 	this->prefijo = prefijo;
 	this->sufijo = sufijo;	
+
 	this->primero = primero;
 	this->siguiente = siguiente;
+
 	this->derecha = derecha;
 	this->izquierda = izquierda;
 }
@@ -87,30 +89,23 @@ unsigned short Diccionario::getIndice()
 	return this->indice;
 }
 
-bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx)
+bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx, string method)
 {
 	// Recibe por parametro el simbolo, devuelve el indice en el diccionario
 	// en el que se encuentra un simbolo que es igual al pasado por parametro
 
-	int a = 0;
-	
-	/* 	a = 0 => busqueda secuencial
-		a = 1 => busqueda lista
-		a = 2 => busqueda abb
-	*/
-
-	if(a == 0)
+	if(method == OPT_NORMAL)
 	{
-		for(idx = 0; idx < len; idx++)
-		{
-			if(sim[idx] == simbolo)
-				return true;
-		}		
+		if(busquedaNormal(simbolo, idx))
+			return true;
+
+		else
+			return false;
 	}
-	else if(a == 1)
+
+	else if(method == OPT_LIST)
 	{
 		/*
-
 		unsigned short idx_pref = sim[simbolo.getPrefijo()].getPrimer();
 		if(sim[idx_pref] == simbolo)
 		{
@@ -121,20 +116,37 @@ bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx)
 			idx_pref = idx_pref->sig;
 			continue;
 		}
-
 		*/
 	}
 	else
 	{
 		/*
-
 			//ABB
-
 		*/
 	}
 
+	return false;
+}
+
+bool Diccionario::busquedaNormal (const Simbolo &simbolo, unsigned short &idx)
+{
+	for(idx = 0; idx < len; idx++)
+		{
+			if(sim[idx] == simbolo)
+				return true;
+		}		
 
 	return false;
+}
+
+bool Diccionario::busquedaLista (const Simbolo &simbolo, unsigned short &idx)
+{
+	return true;
+}
+
+bool Diccionario::busquedaArbol (const Simbolo &simbolo, unsigned short &idx)
+{
+	return true;
 }
 
 void Diccionario::agregarSimbolo(const Simbolo &simbolo)

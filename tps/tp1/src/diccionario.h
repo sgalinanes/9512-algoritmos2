@@ -10,6 +10,10 @@
 
 #define VOID 65535
 
+#define OPT_NORMAL "normal"
+#define OPT_LIST "list"
+#define OPT_TREE "tree" 
+
 using namespace std;
 
 class Simbolo
@@ -77,7 +81,10 @@ public:
 	// ## --- Metodos --- ## //
 	unsigned short getIndice();
 
-	bool buscarSimbolo(const Simbolo &, unsigned short &);
+	bool buscarSimbolo(const Simbolo &, unsigned short &, string);
+	bool busquedaNormal(const Simbolo &, unsigned short &);
+	bool busquedaArbol(const Simbolo &, unsigned short &);
+	bool busquedaLista(const Simbolo &, unsigned short &);
 	void agregarSimbolo(const Simbolo &);
 	void imprimir();
 	void resetDict();

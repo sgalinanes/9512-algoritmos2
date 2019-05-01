@@ -1,10 +1,10 @@
 CXXFLAGS = -Wall -g
 CXX = g++
 
-all : tp0
+all : tp1
 
-tp0: main.o process.o diccionario.o errors.o cmdline.o
-	$(CXX) $(CXXFLAGS) -o tp0 main.o process.o diccionario.o errors.o cmdline.o
+tp1: main.o process.o diccionario.o errors.o cmdline.o
+	$(CXX) $(CXXFLAGS) -o tp1 main.o process.o diccionario.o errors.o cmdline.o
 
 errors.o: errors.cpp errors.h types.h
 	$(CXX) $(CXXFLAGS) -o errors.o -c errors.cpp

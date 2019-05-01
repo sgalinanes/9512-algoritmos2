@@ -5,7 +5,7 @@
 #include "diccionario.h"
 #include "process.h"
 
-status_t compress(istream *iss, ostream *oss)
+status_t compress(istream *iss, ostream *oss, string method)
 {	
 	// Si alguno de los punteros es nulo retornamos un error.
 	if(iss == NULL || oss == NULL)
@@ -33,8 +33,10 @@ status_t compress(istream *iss, ostream *oss)
 
 		// Buscamos si el símbolo se encuentra en el diccionario.
 		// pasando el indice por referencia y retornando el indice
-		// encontrado en caso de que fuera encontrado.
-		if(!dic.buscarSimbolo(buffer, indice))
+		// encontrado en caso de que fuera encontrado. 
+		// Tambien pasamos el método para que realize la busqueda
+		// utilizando el mismo
+		if(!dic.buscarSimbolo(buffer, indice, method))
 		{
 			// Caso: No se encontro en el diccionario
 			// Agregamos el buffer al diccionario			
@@ -71,9 +73,8 @@ status_t compress(istream *iss, ostream *oss)
 }
 
 
-status_t decompress(istream *iss, ostream *oss)
+status_t decompress(istream *iss, ostream *oss, string method)
 {
-	
 	if(iss == NULL || oss == NULL)
 		return ERROR_NULL_POINTER;	
 	
