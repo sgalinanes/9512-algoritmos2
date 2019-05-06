@@ -21,7 +21,7 @@ status_t compress(istream *iss, ostream *oss, string method)
 	unsigned short indice;
 	unsigned char lec; 	
 	char c;
-
+	
 	// Leemos cualquier char del input con la funcion get
 	while(iss->get(c))
 	{
@@ -40,7 +40,7 @@ status_t compress(istream *iss, ostream *oss, string method)
 		{
 			// Caso: No se encontro en el diccionario
 			// Agregamos el buffer al diccionario			
-			dic.agregarSimbolo(buffer);
+			dic.agregarSimbolo(buffer, method);
 
 			// Envíamos el prefijo a la salida (std o archivo)
 			// con un char como separador (usualmente una coma)
@@ -129,7 +129,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
 			return st;
 		}
 		// Agregamos el simbolo al diccionario
-		dic.agregarSimbolo(buffer);
+		dic.agregarSimbolo(buffer, OPT_NORMAL);
 
 		// Actualizamos el indice para la proxima iteracion
 		indice_ant = indice_act;

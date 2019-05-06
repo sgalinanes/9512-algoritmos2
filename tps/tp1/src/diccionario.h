@@ -49,13 +49,20 @@ public:
 	// ## --- Metodos --- ## //
 
 	// Getters
-	unsigned short getPrefijo();
-	unsigned char getSufijo();
+	unsigned short getPrefijo() const;
+	unsigned char getSufijo() const;
+	unsigned short getPrimero() const;
+	unsigned short getSig() const;
+	unsigned short getDerecha() const;
+	unsigned short getIzquierda() const;
 
 	// Setters
 	void setSufijo(unsigned char);
-	void setPrefijo(unsigned short);
-
+	void setPrefijo(unsigned short );
+	void setPrimero(unsigned short );
+	void setSig(unsigned short );
+	void setDerecha(unsigned short );
+	void setIzquierda(unsigned short );
 	// Metodo de impresion
 	void imprimir();
 
@@ -85,7 +92,7 @@ public:
 	bool busquedaNormal(const Simbolo &, unsigned short &);
 	bool busquedaArbol(const Simbolo &, unsigned short &);
 	bool busquedaLista(const Simbolo &, unsigned short &);
-	void agregarSimbolo(const Simbolo &);
+	void agregarSimbolo(Simbolo &, string );
 	void imprimir();
 	void resetDict();
 	status_t getSufijoByIndex(unsigned short, unsigned char &);

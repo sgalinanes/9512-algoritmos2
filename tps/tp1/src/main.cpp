@@ -131,7 +131,6 @@ int main(int argc, char * const argv[])
 	// Variable de estado
 	status_t st;
 
-	chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 	// Chequeamos que proceso se necesita realizar
 	if (process == OPT_COMPRESS) {
 		st = compress(iss, oss, method);
@@ -144,13 +143,6 @@ int main(int argc, char * const argv[])
 			display_error (st);
 	}
 
-	chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-
-	auto duration = chrono::duration_cast<chrono::microseconds>(t2-t1).count();
-
-	cout << "Duration: " << duration << " microseconds" << endl;
-
 	return st;
 }
 
-// Chrono code: https://stackoverflow.com/questions/22387586/measuring-execution-time-of-a-function-in-c

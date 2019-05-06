@@ -33,14 +33,34 @@ Simbolo::Simbolo(unsigned short prefijo, unsigned char sufijo, unsigned short pr
 // ## --- Metodos --- ## //
 
 // Getters
-unsigned short Simbolo::getPrefijo()
+unsigned short Simbolo::getPrefijo() const
 {
 	return prefijo;
 }
 
-unsigned char Simbolo::getSufijo()
+unsigned char Simbolo::getSufijo() const
 {
 	return sufijo;
+}
+
+unsigned short Simbolo::getPrimero() const
+{
+	return primero;
+}
+
+unsigned short Simbolo::getSig() const
+{
+	return siguiente;
+}
+
+unsigned short Simbolo::getDerecha() const
+{
+	return derecha;
+}
+
+unsigned short Simbolo::getIzquierda() const
+{
+	return izquierda;
 }
 
 // Setters
@@ -53,6 +73,27 @@ void Simbolo::setPrefijo(unsigned short prefijo)
 {
 	this->prefijo = prefijo;
 }
+
+void Simbolo::setPrimero(unsigned short primero)
+{
+	this->primero = primero;
+}
+
+void Simbolo::setSig(unsigned short siguiente)
+{
+	this->siguiente = siguiente;
+}
+
+void Simbolo::setDerecha(unsigned short derecha)
+{
+	this->derecha = derecha;
+}
+
+void Simbolo::setIzquierda(unsigned short izquierda)
+{
+	this->izquierda = izquierda;
+}
+
 
 // Metodo de impresion
 void Simbolo::imprimir()
@@ -98,31 +139,23 @@ bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx, str
 	{
 		if(busquedaNormal(simbolo, idx))
 			return true;
-
 		else
 			return false;
 	}
 
 	else if(method == OPT_LIST)
 	{
-		/*
-		unsigned short idx_pref = sim[simbolo.getPrefijo()].getPrimer();
-		if(sim[idx_pref] == simbolo)
-		{
-			return ok
-		}
+		if(busquedaLista(simbolo, idx))
+			return true;
 		else
-		{
-			idx_pref = idx_pref->sig;
-			continue;
-		}
-		*/
+			return false;
 	}
 	else
 	{
-		/*
-			//ABB
-		*/
+		if(busquedaArbol(simbolo, idx))
+			return true;
+		else
+			return false;
 	}
 
 	return false;
@@ -141,7 +174,31 @@ bool Diccionario::busquedaNormal (const Simbolo &simbolo, unsigned short &idx)
 
 bool Diccionario::busquedaLista (const Simbolo &simbolo, unsigned short &idx)
 {
-	return true;
+
+	// Si el simbolo esta en el dicc ASCII entonces buscamos dir. entre
+	// esos simbolos.
+	if(simbolo.getPrefijo() == VOID)
+	{
+		return busquedaNormal(simbolo, idx);
+	}
+
+	// Indice del primer simbolo de la lista. Utilizamos el parametro pasado
+	// por referencia para no utilizar otra variable local.
+	idx = sim[simbolo.getPrefijo()].getPrimero();
+
+	while(sim[idx].getSufijo() != simbolo.getSufijo() && idx != VOID)
+	{
+
+		// Iteramos por la lista del prefijo en cuestión.
+		idx = sim[idx].getSig();
+	}
+
+	// Si encontramos un simbolo entonces idx no será VOID, en caso contrario
+	// si sera void. El valor del indice pasado por parametro ya se encuentra
+	// establecido debido a la iteración. Por lo tanto solo falta chequear
+	// Si es VOID o no para ver si se ha encontrado el elemento o no.
+	return (idx != VOID);
+
 }
 
 bool Diccionario::busquedaArbol (const Simbolo &simbolo, unsigned short &idx)
@@ -149,7 +206,7 @@ bool Diccionario::busquedaArbol (const Simbolo &simbolo, unsigned short &idx)
 	return true;
 }
 
-void Diccionario::agregarSimbolo(const Simbolo &simbolo)
+void Diccionario::agregarSimbolo(Simbolo &simbolo, string method)
 {
 	// Recibe por parametro el simbolo, lo agrega al diccionario y actualiza el indice.
 	// En caso de que el indice agregado sea el ultimo disponible, resetea el diccionario.
@@ -157,8 +214,30 @@ void Diccionario::agregarSimbolo(const Simbolo &simbolo)
 
 	if(indice < len-1)
 	{
-		sim[indice] = simbolo;
-		indice++;		
+		if(method == OPT_NORMAL)
+		{
+			sim[indice] = simbolo;
+			indice++;					
+		}
+		else if(method == OPT_LIST)
+		{
+			// Guardamos en variable local el indice del prefijo del simbolo
+			unsigned short idx_pref = simbolo.getPrefijo();
+
+			// Seteamos el siguiente de nuestro simbolo, al primero del indice
+			// del prefijo del simbolo, si es VOID, es porque era una lista vacia
+			// Si no es void, entonces este primer "nodo" ya estara apuntando al siguiente.
+			simbolo.setSig(sim[idx_pref].getPrimero());
+
+			// Luego seteamos al nuevo "nodo" para que sea el primer elemento de la lista.
+			sim[idx_pref].setPrimero(indice);
+
+			// Guardamos el simbolo en el diccionario
+			sim[indice] = simbolo;
+			indice++;
+
+		}
+
 	}
 	else
 		resetDict();
@@ -169,10 +248,18 @@ void Diccionario::resetDict()
 	// Resetea el diccionario dejando unicamente los simbolos correspondientes a los ASCII, es
 	// decir los indices entre 0 y 255. Resetea el arreglo de simbolos y el indice.
 
+	for(size_t i = 0; i < MAX_ASCII; i++)
+	{
+		sim[i].setPrimero(VOID);
+	}
 	for(size_t i = MAX_ASCII; i < len; i++)
 	{
 		sim[i].setPrefijo(VOID);
 		sim[i].setSufijo(0);
+		sim[i].setPrimero(VOID);
+		sim[i].setSig(VOID);
+		sim[i].setDerecha(VOID);
+		sim[i].setIzquierda(VOID);
 	}
 
 	indice = MAX_ASCII;
