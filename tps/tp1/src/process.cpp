@@ -23,7 +23,7 @@ status_t compress(istream *iss, ostream *oss, string method)
 	char c;
 	
 	// Leemos cualquier char del input con la funcion get
-	while(iss->get(c))
+	while(iss->read(&c, sizeof(char)))
 	{
 		// Casteamos el char leído a unsigned char 
 		lec = static_cast<unsigned char>(c);
@@ -98,9 +98,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
 		// Buscamos el sufijo dado el indice
 		unsigned char sfx;
 		if( (st = dic.getSufijoByIndex(indice_act, sfx)) != OK)
-		{
 			return st;
-		}
 
 		// Imprimimos el sufijo
 		*oss << sfx;
@@ -110,12 +108,14 @@ status_t decompress(istream *iss, ostream *oss, string method)
 
 		// Salteamos el separador
 		*iss >> c;
-		if(c != TOKEN_SEPARATOR)
+		
+		if(c != TOKEN_SEPARATOR) {
 			return ERROR_FILE_FORMAT;
+		}
 	}
 	else // Ocurrio un error al leer el indice
-        return ERROR_READ_FILE;
-
+     		return ERROR_READ_FILE;
+	
 	// Comenzamos la lectura iterativamente.
 	while(*iss >> indice_act)
 	{

@@ -94,7 +94,6 @@ void Simbolo::setIzquierda(unsigned short izquierda)
 	this->izquierda = izquierda;
 }
 
-
 // Metodo de impresion
 void Simbolo::imprimir()
 {
@@ -103,7 +102,7 @@ void Simbolo::imprimir()
 }
 
 // Overload: Comparacion
-bool Simbolo::operator==(const Simbolo &sim)
+bool Simbolo::operator==(const Simbolo &sim) const
 {
 	// Comparamos el simbolo componente por componente
 	if(prefijo == sim.prefijo && sufijo == sim.sufijo)
@@ -111,6 +110,27 @@ bool Simbolo::operator==(const Simbolo &sim)
 
 	return false;
 }
+
+// Overload: Comparacion
+bool Simbolo::operator>(const Simbolo &sim) const
+{
+	// Comparamos el simbolo
+	if(this->sufijo > sim.getSufijo())
+		return true;
+
+	return false;
+}
+
+// Overload: Comparacion
+bool Simbolo::operator<(const Simbolo &sim) const
+{
+	// Comparamos el simbolo
+	if(this->sufijo < sim.getSufijo())
+		return true;
+
+	return false;
+}
+
 
 // CLASE DICCIONARIO //
 // ## --- Constructores --- ## //
@@ -139,6 +159,7 @@ bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx, str
 	{
 		if(busquedaNormal(simbolo, idx))
 			return true;
+
 		else
 			return false;
 	}
@@ -147,6 +168,7 @@ bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx, str
 	{
 		if(busquedaLista(simbolo, idx))
 			return true;
+
 		else
 			return false;
 	}
@@ -154,6 +176,7 @@ bool Diccionario::buscarSimbolo(const Simbolo &simbolo, unsigned short &idx, str
 	{
 		if(busquedaArbol(simbolo, idx))
 			return true;
+
 		else
 			return false;
 	}
@@ -174,24 +197,19 @@ bool Diccionario::busquedaNormal (const Simbolo &simbolo, unsigned short &idx)
 
 bool Diccionario::busquedaLista (const Simbolo &simbolo, unsigned short &idx)
 {
-
 	// Si el simbolo esta en el dicc ASCII entonces buscamos dir. entre
 	// esos simbolos.
 	if(simbolo.getPrefijo() == VOID)
-	{
+		//TODO: idx = (unsigned short)simbolo.getSufijo();
 		return busquedaNormal(simbolo, idx);
-	}
 
 	// Indice del primer simbolo de la lista. Utilizamos el parametro pasado
 	// por referencia para no utilizar otra variable local.
 	idx = sim[simbolo.getPrefijo()].getPrimero();
 
 	while(sim[idx].getSufijo() != simbolo.getSufijo() && idx != VOID)
-	{
-
 		// Iteramos por la lista del prefijo en cuestión.
 		idx = sim[idx].getSig();
-	}
 
 	// Si encontramos un simbolo entonces idx no será VOID, en caso contrario
 	// si sera void. El valor del indice pasado por parametro ya se encuentra
@@ -203,7 +221,28 @@ bool Diccionario::busquedaLista (const Simbolo &simbolo, unsigned short &idx)
 
 bool Diccionario::busquedaArbol (const Simbolo &simbolo, unsigned short &idx)
 {
-	return true;
+	if(simbolo.getPrefijo() == VOID)
+		//TODO: idx = (unsigned shrot)simbolo.getSufijo()
+		return busquedaNormal(simbolo, idx);
+	
+	unsigned short nodo = sim[simbolo.getPrefijo()].getPrimero();	
+
+	while (nodo != VOID)
+	{
+		if (simbolo == sim [nodo])
+		{
+			idx = nodo;
+			return true;
+		}
+
+		else if (simbolo < sim [nodo])
+			nodo = sim[nodo].getIzquierda();
+					
+		else
+			nodo = sim[nodo].getDerecha(); 
+	}			
+	
+	return false;
 }
 
 void Diccionario::agregarSimbolo(Simbolo &simbolo, string method)
@@ -221,7 +260,7 @@ void Diccionario::agregarSimbolo(Simbolo &simbolo, string method)
 		}
 		else if(method == OPT_LIST)
 		{
-			// Guardamos en variable local el indice del prefijo del simbolo
+			// Guardamos en una variable local el indice del prefijo del simbolo
 			unsigned short idx_pref = simbolo.getPrefijo();
 
 			// Seteamos el siguiente de nuestro simbolo, al primero del indice
@@ -235,7 +274,51 @@ void Diccionario::agregarSimbolo(Simbolo &simbolo, string method)
 			// Guardamos el simbolo en el diccionario
 			sim[indice] = simbolo;
 			indice++;
+		}
 
+		else if (method == OPT_TREE)
+		{
+			unsigned short idx_pref = simbolo.getPrefijo();
+
+			if (sim[idx_pref].getPrimero() == VOID) 
+				sim[idx_pref].setPrimero(indice);
+
+			else {
+				unsigned short nodo = sim[idx_pref].getPrimero();	
+
+				while (true)
+				{
+					if(simbolo < sim[nodo])
+					{
+						if (sim[nodo].getIzquierda() == VOID)
+						{
+							sim[nodo].setIzquierda(indice);
+							break;
+						}
+						else
+						{
+							nodo = sim[nodo].getIzquierda();
+							continue;
+						}		
+					}
+					else
+					{
+						if (sim[nodo].getDerecha() == VOID)
+						{
+							sim[nodo].setDerecha(indice);
+							break;			
+						}
+						else
+						{
+							nodo = sim[nodo].getDerecha();
+							continue;
+						}
+					}
+				}			
+
+			}
+			sim [indice] = simbolo;
+			indice ++;
 		}
 
 	}

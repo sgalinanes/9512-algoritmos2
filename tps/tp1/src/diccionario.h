@@ -67,7 +67,10 @@ public:
 	void imprimir();
 
 	// Overload: Comparacion
-	bool operator==(const Simbolo &);
+	bool operator==(const Simbolo &) const;
+	bool operator>(const Simbolo &) const;
+	bool operator<(const Simbolo &) const;
+
 };
 
 class Diccionario

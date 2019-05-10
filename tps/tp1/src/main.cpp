@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <sstream>
 #include <cstdlib>
-#include <chrono>
 
 #include "types.h"
 #include "diccionario.h"
@@ -146,3 +145,4 @@ int main(int argc, char * const argv[])
 	return st;
 }
 
+// Chrono code: https://stackoverflow.com/questions/22387586/measuring-execution-time-of-a-function-in-c

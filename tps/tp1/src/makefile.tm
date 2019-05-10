@@ -1,4 +1,4 @@
-CXXFLAGS = -Wall -g
+CXXFLAGS = -Wall -g 
 CXX = g++
 
 all : tm_tp1

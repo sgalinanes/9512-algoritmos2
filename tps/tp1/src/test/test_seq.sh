@@ -25,7 +25,8 @@ diff -s entrada3.txt vuelta3.txt
 
 echo -e "\n"
 
-# Compresión, decompresión y diferencia en un archivo grande.
+# Compresión, decompresión y diferencia en un archivo grande, 
+# usando metodo list
 stat -c %s entrada4.txt
 ./tp1 -i entrada4.txt -o salida4.txt -p compress
 ./tp1 -i salida4.txt -o vuelta4.txt -p decompress 
@@ -75,6 +76,7 @@ diff -s entrada3.txt vuelta3.txt
 echo -e "\n"
 
 # Compresión, decompresión y diferencia en un archivo grande.
+# usando metodo list
 stat -c %s entrada4.txt
 ./tp1 --input entrada4.txt --output salida4.txt --process compress 
 ./tp1 --input salida4.txt --output vuelta4.txt --process decompress
