@@ -44,7 +44,8 @@ status_t compress(istream *iss, ostream *oss, string method)
 
 			// Envíamos el prefijo a la salida (std o archivo)
 			// con un char como separador (usualmente una coma)
-			*oss << buffer.getPrefijo() << TOKEN_SEPARATOR;
+			if(!(*oss << buffer.getPrefijo() << TOKEN_SEPARATOR))
+				return ERROR_WRITE_FILE;
 
 			// Buscamos el indice del sufijo, lo necesitaremos para agregarlo
 			// como prefijo del buffer en la proxima iteracion.
@@ -65,7 +66,8 @@ status_t compress(istream *iss, ostream *oss, string method)
 		if(buffer.getPrefijo() != VOID)
 		{
 			// Imprimimos el ultimo prefijo (al llegar a EOF)
-			*oss << buffer.getPrefijo() << endl;			
+			if(!(*oss << buffer.getPrefijo() << endl))
+				return ERROR_WRITE_FILE;			
 		}
 
 
@@ -101,7 +103,8 @@ status_t decompress(istream *iss, ostream *oss, string method)
 			return st;
 
 		// Imprimimos el sufijo
-		*oss << sfx;
+		if(!(*oss << sfx))
+			return ERROR_WRITE_FILE;
 
 		// Actualizamos el indice
 		indice_ant = indice_act;
@@ -114,7 +117,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
 		}
 	}
 	else // Ocurrio un error al leer el indice
-     		return ERROR_READ_FILE;
+     	return ERROR_READ_FILE;
 	
 	// Comenzamos la lectura iterativamente.
 	while(*iss >> indice_act)
@@ -136,6 +139,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
 
 		// Salteamos el separador.
 		*iss >> c;
+
 		if(c != TOKEN_SEPARATOR)
 			return ERROR_FILE_FORMAT;
 	}

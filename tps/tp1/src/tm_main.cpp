@@ -194,13 +194,22 @@ int main(int argc, char * const argv[])
 		// Clear el stringstream
 		ss.str("");
 
-
-		//--------------- COMIENZO COMPRESION ---------------------//
-		
-		chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
 		// Chequeamos que proceso se necesita realizar
 		if (process == OPT_COMPRESS) {
+
+
+			//--------------- COMIENZO COMPRESION ---------------------//
+			chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+
 			st = compress(iss, oss, method);
+
+			chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+			//--------------- FIN COMPRESION  --------------------------//
+			auto duration = chrono::duration_cast<chrono::microseconds>(t2-t1).count();
+
+			// Enviamos los datos al archivo de resultados
+			resultados << n << "," << duration << endl;
+
 			if (st != OK)
 			{
 				display_error (st);
@@ -216,15 +225,6 @@ int main(int argc, char * const argv[])
 			}
 		}
 
-		chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
-		
-		//--------------- FIN COMPRESION  --------------------------//
-
-
-		auto duration = chrono::duration_cast<chrono::microseconds>(t2-t1).count();
-
-		// Enviamos los datos al archivo de resultados
-		resultados << n << "," << duration << endl;
 
 		// Cerramos el archivo de entrada, y dejamos sin uso la memoria pedida.
 		entrada.close();

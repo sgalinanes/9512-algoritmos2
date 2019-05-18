@@ -407,7 +407,8 @@ status_t Diccionario::reconstruirCadena(unsigned short indice_act, Simbolo &buff
 			return st;
 
 		// Imprimimos el sufijo del buffer (que sera el primer caracter de la cadena del indice anterior previamente pasado)
-		*oss << buffer.getSufijo();
+		if(!(*oss << buffer.getSufijo()))
+			return ERROR_WRITE_FILE;
 
 		return OK;
 
@@ -425,7 +426,9 @@ status_t Diccionario::reconstruirCadena(unsigned short indice_act, Simbolo &buff
 			buffer.setSufijo(sufijo_idx);
 
 			// Imprimimos el primer caracter al reconstruir la cadena.
-			*oss << sufijo_idx;
+			if(!(*oss << sufijo_idx))
+				return ERROR_WRITE_FILE;
+
 			return OK;
 		}
 
@@ -435,7 +438,8 @@ status_t Diccionario::reconstruirCadena(unsigned short indice_act, Simbolo &buff
 		reconstruirCadena(prefijo_idx, buffer, oss);
 
 		// Imprimimos el sufijo del indice.
-		*oss << sufijo_idx;
+		if(!(*oss << sufijo_idx))
+			return ERROR_WRITE_FILE;
 
 		return OK;
 	}		

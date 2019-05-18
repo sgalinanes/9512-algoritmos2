@@ -9,7 +9,8 @@ string error_dictionary [MAX_ERRORS] = {
                             ERROR_1, 
                             ERROR_2, 
                             ERROR_3,
-                            ERROR_4
+                            ERROR_4,
+                            ERROR_5
                         };
 
 
