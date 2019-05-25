@@ -40,6 +40,12 @@ cat salida5.txt
 
 echo -e "\n"
 
+# Descompresion de archivo con formato correcto, pero con índices fuera de rango
+cat salida8
+./tp1 -i salida8 -o vuelta8 -p decompress
+
+echo -e "\n"
+
 # Compresion y decompresión de un archivo 'docx' y 'pdf'
 ./tp1 -i entrada6.docx -o salida6.docx -p compress
 ./tp1 -i salida6.docx -o vuelta6.docx -p decompress
@@ -49,8 +55,23 @@ diff -s entrada6.docx vuelta6.docx
 ./tp1 -i salida7.pdf -o vuelta7.pdf -p decompress
 diff -s entrada7.pdf vuelta7.pdf
 
-# Corremos nuevamente todas las pruebas con los param. largos
+# Archivo de entrada inexistente
+./tp1 -i entrada_inexistente 
 
+# Archivo de salida inexistente
+/tp1 -i entrada1.txt -o salida_inexistente
+
+# Metodo inexistente
+/tp1 -i entrada1.txt -o salida1.txt -m met_inexistente
+
+# Parametro(s) erroneos
+./tp1 -j entrada1.txt -o salida1.txt 
+./tp1 -i entrada1.txt -o salida1.txt -n tree
+./tp1 -i entrada1.txt -u salida1.txt 
+./tp1 -i entrada1.txt -o salida1.txt -l compress
+./tp1 -i entrada1.txt -i entrada2.txt 
+
+# Corremos nuevamente todas las pruebas con los param. largos
 # Entrada vacia
 touch entrada1.txt
 ./tp1 --input entrada1.txt --output salida1.txt
@@ -87,6 +108,12 @@ diff -s entrada4.txt vuelta4.txt
 # Decompresión de archivo con formato incorrecto
 cat salida5.txt
 ./tp1 --input salida5.txt --output vuelta5.txt --process decompress
+
+echo -e "\n"
+
+# Descompresion de archivo con formato correcto, pero con índices fuera de rango
+cat salida8
+./tp1 --input salida8 --output vuelta8 --process decompress
 
 echo -e "\n"
 

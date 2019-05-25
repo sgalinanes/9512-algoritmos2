@@ -40,6 +40,12 @@ cat salida5.txt
 
 echo -e "\n"
 
+# Descompresion de archivo con formato correcto, pero con índices fuera de rango
+cat salida8
+./tp1 -i salida8 -o vuelta8 -p decompress -m list
+
+echo -e "\n"
+
 # Compresion y decompresión de un archivo 'docx' y 'pdf'
 ./tp1 -i entrada6.docx -o salida6.docx -p compress -m list
 ./tp1 -i salida6.docx -o vuelta6.docx -p decompress
@@ -89,6 +95,13 @@ cat salida5.txt
 ./tp1 --input salida5.txt --output vuelta5.txt --process decompress
 
 echo -e "\n"
+
+# Descompresion de archivo con formato correcto, pero con índices fuera de rango
+cat salida8
+./tp1 --input salida8 --output vuelta8 --process decompress --method list
+
+echo -e "\n"
+
 
 # Compresion y decompresión de un archivo 'docx' y 'pdf'
 ./tp1 --input entrada6.docx --output salida6.docx --process compress --method list

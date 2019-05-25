@@ -399,7 +399,7 @@ status_t Diccionario::reconstruirCadena(unsigned short indice_act, Simbolo &buff
 		// pertenecen al diccionario, entonces no podemos realizar la reconstruccion (la data es erronea).
 		if(indice_ant == indice_act)
 		{
-			return ERROR_READ_FILE;	
+			return ERROR_INDEX_OUT_OF_RANGE;
 		}
 
 		// Llamamos nuevamente a la función pero dandole el indice anterior como indice actual (el prefijo del simbolo a crear)
