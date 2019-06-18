@@ -20,6 +20,7 @@ status_t compress(istream *iss, ostream *oss, string method)
 	// Inicializamos variables para la lectura
 	unsigned short indice;
 	unsigned char lec; 	
+	unsigned short prefijo;
 	char c;
 	
 	// Leemos cualquier char del input con la funcion get
@@ -44,8 +45,10 @@ status_t compress(istream *iss, ostream *oss, string method)
 
 			// Envíamos el prefijo a la salida (std o archivo)
 			// con un char como separador (usualmente una coma)
-			if(!(*oss << buffer.getPrefijo() << TOKEN_SEPARATOR))
-				return ERROR_WRITE_FILE;
+			prefijo = buffer.getPrefijo();
+			c = TOKEN_SEPARATOR;
+			oss->write(reinterpret_cast<char *>(&prefijo), sizeof(prefijo));
+			oss->write(reinterpret_cast<char *>(&c), sizeof(c));
 
 			// Buscamos el indice del sufijo, lo necesitaremos para agregarlo
 			// como prefijo del buffer en la proxima iteracion.
@@ -66,7 +69,8 @@ status_t compress(istream *iss, ostream *oss, string method)
 		if(buffer.getPrefijo() != VOID)
 		{
 			// Imprimimos el ultimo prefijo (al llegar a EOF)
-			if(!(*oss << buffer.getPrefijo() << endl))
+			prefijo = buffer.getPrefijo();
+			if(!(oss->write(reinterpret_cast<char *>(&prefijo), sizeof(prefijo))))
 				return ERROR_WRITE_FILE;			
 		}
 
@@ -95,7 +99,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
 	char c;
 
 	// Para el primer indice no se agrega nada al diccionario, lo tratamos aparte.
-	if(*iss >> indice_act)
+	if(iss->read(reinterpret_cast<char *>(&indice_act), sizeof(indice_act)))
 	{
 		// Buscamos el sufijo dado el indice
 		unsigned char sfx;
@@ -103,14 +107,14 @@ status_t decompress(istream *iss, ostream *oss, string method)
 			return st;
 
 		// Imprimimos el sufijo
-		if(!(*oss << sfx))
+		if(!(oss->write(reinterpret_cast<char *>(&sfx), sizeof(sfx))))
 			return ERROR_WRITE_FILE;
 
 		// Actualizamos el indice
 		indice_ant = indice_act;
 
 		// Salteamos el separador
-		*iss >> c;
+		iss->read(&c, sizeof(char));
 		
 		if(c != TOKEN_SEPARATOR) {
 			return ERROR_FILE_FORMAT;
@@ -120,7 +124,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
      	return ERROR_READ_FILE;
 	
 	// Comenzamos la lectura iterativamente.
-	while(*iss >> indice_act)
+	while(iss->read(reinterpret_cast<char *>(&indice_act), sizeof(indice_act)))
 	{
 		// Agregamos el indice anterior al prefijo del buffer.
 		buffer.setPrefijo(indice_ant);
@@ -138,7 +142,7 @@ status_t decompress(istream *iss, ostream *oss, string method)
 		indice_ant = indice_act;
 
 		// Salteamos el separador.
-		*iss >> c;
+		iss->read(&c, sizeof(char));
 
 		if(c != TOKEN_SEPARATOR)
 			return ERROR_FILE_FORMAT;
